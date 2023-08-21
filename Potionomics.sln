@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Potionomics", "Potionomics\Potionomics.csproj", "{2D57B75E-7710-476B-9511-C11225AFF5EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PotionomicsWpf", "PotionomicsWpf\PotionomicsWpf.csproj", "{13DDBA33-6612-4C67-A1FC-A76C609F8073}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D57B75E-7710-476B-9511-C11225AFF5EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D57B75E-7710-476B-9511-C11225AFF5EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D57B75E-7710-476B-9511-C11225AFF5EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D57B75E-7710-476B-9511-C11225AFF5EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13DDBA33-6612-4C67-A1FC-A76C609F8073}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13DDBA33-6612-4C67-A1FC-A76C609F8073}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13DDBA33-6612-4C67-A1FC-A76C609F8073}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13DDBA33-6612-4C67-A1FC-A76C609F8073}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CF43A2B-D0EE-47CA-AA5F-FCDD5ED9B434}
+	EndGlobalSection
+EndGlobal
