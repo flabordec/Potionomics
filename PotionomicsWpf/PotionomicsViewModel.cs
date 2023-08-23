@@ -71,9 +71,9 @@ namespace PotionomicsWpf
             AllPotionRecipes = model.PotionRecipes.ToArray();
             AllLocations = model.Locations.ToArray();
 
-            _selectedCauldron = AllCauldrons.Single(c => c.Name == "Ocean ++ Cauldron");
+            _selectedCauldron = AllCauldrons.Single(c => c.Name == "Steel \u002B\u002B Cauldron");
             _selectedPotionRecipe = AllPotionRecipes.First();
-            _selectedLocation = AllLocations.Single(l => l == "Shadow Steppe");
+            _selectedLocation = AllLocations.Single(l => l == "Crystalline Forest");
 
             _displaySize = 10;
             _generationSize = 50;
