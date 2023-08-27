@@ -4,6 +4,15 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Potionomics
 {
+    public interface IHasMagimins
+    {
+        int MagiminsA { get; }
+        int MagiminsB { get; }
+        int MagiminsC { get; }
+        int MagiminsD { get; }
+        int MagiminsE { get; }
+    }
+
     public record Cauldron(string Name, int MaxIngredients, int MaxMagimins);
 
     public record Ingredient(
@@ -22,7 +31,7 @@ namespace Potionomics
         bool? Visual,
         bool? Sound,
         int BasePrice,
-        string Location);
+        string Location) : IHasMagimins;
 
     public class PotionScoreComparer : IEqualityComparer<Potion>, IComparer<Potion>
     {
@@ -35,10 +44,7 @@ namespace Potionomics
             if (y == null)
                 return -1;
 
-            if (y.Score != x.Score)
-                return y.Score.CompareTo(x.Score);
-
-            return y.TotalMagimins.CompareTo(x.TotalMagimins);
+            return y.Score.CompareTo(x.Score);
         }
 
         public bool Equals(Potion? x, Potion? y)
@@ -56,7 +62,7 @@ namespace Potionomics
         }
     }
 
-    public class Potion
+    public class Potion : IHasMagimins
     {
         private static int[] Tiers = new int[]
         {
@@ -67,6 +73,8 @@ namespace Potionomics
             470, 505, 545, 580, 620, 660,
             720, 800, 875, 960, 1040, 1125,
         };
+
+        public PotionRecipe Recipe { get; }
 
         public Ingredient[] Ingredients { get; }
 
@@ -84,6 +92,14 @@ namespace Potionomics
 
         public double Score { get; }
 
+        public int MagiminsA { get; }
+        public int MagiminsB { get; }
+        public int MagiminsC { get; }
+        public int MagiminsD { get; }
+        public int MagiminsE { get; }
+
+        public double NormalizedRatiosOffBy { get; }
+
         private bool? CalculateTrait(IEnumerable<bool?> values)
         {
             bool? feeling = null;
@@ -97,21 +113,22 @@ namespace Potionomics
             return feeling;
         }
 
-        public Potion(Ingredient[] ingredients, PotionRecipe potionRecipe)
+        public Potion(Ingredient[] ingredients, PotionRecipe potionRecipe, Cauldron cauldron)
         {
-            Ingredients = ingredients;
+            Recipe = potionRecipe;
+            Ingredients = ingredients.OrderByDescending(i => i.TotalMagimins).ToArray();
             TotalMagimins = ingredients.Sum(i => i.TotalMagimins);
-            var magiminsA = ingredients.Sum(i => i.MagiminsA);
-            var magiminsB = ingredients.Sum(i => i.MagiminsB);
-            var magiminsC = ingredients.Sum(i => i.MagiminsC);
-            var magiminsD = ingredients.Sum(i => i.MagiminsD);
-            var magiminsE = ingredients.Sum(i => i.MagiminsE);
+            MagiminsA = ingredients.Sum(i => i.MagiminsA);
+            MagiminsB = ingredients.Sum(i => i.MagiminsB);
+            MagiminsC = ingredients.Sum(i => i.MagiminsC);
+            MagiminsD = ingredients.Sum(i => i.MagiminsD);
+            MagiminsE = ingredients.Sum(i => i.MagiminsE);
 
-            double ratioA = (double)magiminsA / TotalMagimins;
-            double ratioB = (double)magiminsB / TotalMagimins;
-            double ratioC = (double)magiminsC / TotalMagimins;
-            double ratioD = (double)magiminsD / TotalMagimins;
-            double ratioE = (double)magiminsE / TotalMagimins;
+            double ratioA = (double)MagiminsA / TotalMagimins;
+            double ratioB = (double)MagiminsB / TotalMagimins;
+            double ratioC = (double)MagiminsC / TotalMagimins;
+            double ratioD = (double)MagiminsD / TotalMagimins;
+            double ratioE = (double)MagiminsE / TotalMagimins;
 
             double ratiosOffBy = 0;
             ratiosOffBy += Math.Abs(ratioA - potionRecipe.RatioA);
@@ -120,18 +137,20 @@ namespace Potionomics
             ratiosOffBy += Math.Abs(ratioD - potionRecipe.RatioD);
             ratiosOffBy += Math.Abs(ratioE - potionRecipe.RatioE);
 
-            double normalizedRatiosOffBy = (5.0 - ratiosOffBy) / 5.0;
+            NormalizedRatiosOffBy = ratiosOffBy / 5.0;
 
             int tier = Array.BinarySearch(Tiers, TotalMagimins);
             if (tier < 0)
                 tier = -tier - 1;
 
-            if (normalizedRatiosOffBy == 0)
+            if (NormalizedRatiosOffBy == 0)
                 tier += 3;
-            else if (normalizedRatiosOffBy >= 1)
+            else if (NormalizedRatiosOffBy <= 0.02)
                 tier += 2;
-            else if (normalizedRatiosOffBy >= 1)
+            else if (NormalizedRatiosOffBy <= 0.06)
                 tier += 1;
+            else if (NormalizedRatiosOffBy < 0.1)
+                tier -= 1;
             else
                 tier = 0;
 
@@ -144,7 +163,7 @@ namespace Potionomics
             Sound = CalculateTrait(ingredients.Select(i => i.Sound));
 
             int totalTraits = 0;
-            foreach (var trait in new[] { Taste, Sensation, Aroma, Visual, Sound }) 
+            foreach (var trait in new[] { Taste, Sensation, Aroma, Visual, Sound })
             {
                 if (trait == true)
                 {
@@ -163,15 +182,27 @@ namespace Potionomics
             }
             else
             {
+                const double traitValue = 0.25;
+
                 double score = Tier;
-                for (int i = 0; i < TotalTraits; i++)
-                    score *= 1.25;
+                foreach (var trait in new[] { Taste, Sensation, Aroma, Visual, Sound })
+                {
+                    if (trait == true)
+                    {
+                        score += traitValue;
+                    }
+                    else if (trait == false)
+                    {
+                        score -= traitValue;
+                    }
+                }
+                score += (1.0 - NormalizedRatiosOffBy);
                 Score = score;
             }
         }
     }
 
-    public record PotionRecipe(string Name, int MagiminsA, int MagiminsB, int MagiminsC, int MagiminsD, int MagiminsE)
+    public record PotionRecipe(string Name, int MagiminsA, int MagiminsB, int MagiminsC, int MagiminsD, int MagiminsE) : IHasMagimins
     {
         public int TotalMagimins => MagiminsA + MagiminsB + MagiminsC + MagiminsD + MagiminsE;
         public double RatioA => (double)MagiminsA / TotalMagimins;

@@ -6,115 +6,169 @@
         xmlns:local="clr-namespace:PotionomicsWpf"
         xmlns:dataModel="clr-namespace:Potionomics;assembly=Potionomics"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="960" Width="800">
     <Window.DataContext>
         <local:PotionomicsViewModel />
     </Window.DataContext>
     <Window.Resources>
         <local:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
     </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-            </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0" Header="Potionomics Parameters">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Location" />
+                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AllLocations}" SelectedItem="{Binding SelectedLocation}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Cauldron" />
+                <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding AllCauldrons}" SelectedItem="{Binding SelectedCauldron}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Potion Recipe" />
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding AllPotionRecipes}" SelectedItem="{Binding SelectedPotionRecipe}" DisplayMemberPath="Name" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Header="Generic Algorithm Parameters">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Display # Top Potions" />
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DisplaySize}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Generation Size" />
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding GenerationSize}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Mutation Chance" />
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding MutationChance}" />
+
+                <Label Grid.Row="3" Grid.Column="0" Content="Automatic Promotion Count" />
+                <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding AutomaticPromotionCount}" />
+
+                <Label Grid.Row="4" Grid.Column="0" Content="Single Ingredients Promotion Count" />
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding SingleIngredientPromotionCount}" />
+
+                <Label Grid.Row="5" Grid.Column="0" Content="Maximum Generation" />
+                <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MaximumGeneration}" />
+
+                <Label Grid.Row="6" Grid.Column="0" Content="Maximum Time (Seconds)" />
+                <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding MaximumTimeInSeconds}" />
+            </Grid>
+        </GroupBox>
+
+        <Separator Grid.Row="2" />
+
+        <GroupBox Grid.Row="3" Header="Results">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Generation" />
+                <Label Grid.Row="0" Grid.Column="1" Content="{Binding GenerationCount}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Average Fitness" />
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding AverageFitness}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Content="Result Potions" />
+                <TreeView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Potions}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type dataModel:Potion}" ItemsSource="{Binding Ingredients}">
+                            <GroupBox Header="{Binding Recipe.Name}">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="{Binding Score}" ContentStringFormat="Score: {0}" />
+                                        <Label Content="{Binding Tier}" ContentStringFormat="Tier: {0}" />
+                                        <Label Content="{Binding TotalTraits}" ContentStringFormat="Traits: {0}" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Label Content="{Binding MagiminsA}" ContentStringFormat="A: {0}" />
+                                        <Label Content="{Binding MagiminsB}" ContentStringFormat="B: {0}" />
+                                        <Label Content="{Binding MagiminsC}" ContentStringFormat="C: {0}" />
+                                        <Label Content="{Binding MagiminsD}" ContentStringFormat="D: {0}" />
+                                        <Label Content="{Binding MagiminsE}" ContentStringFormat="E: {0}" />
+                                        <Label Content="{Binding TotalMagimins}" ContentStringFormat="Magimins: {0}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </GroupBox>
+                        </HierarchicalDataTemplate>
+                        <DataTemplate DataType="{x:Type dataModel:Ingredient}">
+                            <Label Content="{Binding Name}" />
+                        </DataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </Grid>
+        </GroupBox>
+
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Row="0" Grid.Column="0" Content="Location" />
-            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding AllLocations}" SelectedItem="{Binding SelectedLocation}" />
-            
-            <Label Grid.Row="1" Grid.Column="0" Content="Cauldron" />
-            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding AllCauldrons}" SelectedItem="{Binding SelectedCauldron}" />
-
-            <Label Grid.Row="2" Grid.Column="0" Content="Potion Recipe" />
-            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding AllPotionRecipes}" SelectedItem="{Binding SelectedPotionRecipe}" DisplayMemberPath="Name" />
-
-            <Label Grid.Row="3" Grid.Column="0" Content="Display # Top Potions" />
-            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding DisplaySize}" />
-            
-            <Label Grid.Row="4" Grid.Column="0" Content="Generation Size" />
-            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding GenerationSize}" />
-            
-            <Label Grid.Row="5" Grid.Column="0" Content="Mutation Chance" />
-            <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding MutationChance}" />
-            
-            <Label Grid.Row="6" Grid.Column="0" Content="Automatic Promotion Count" />
-            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding AutomaticPromotionCount}" />
-            
-            <Label Grid.Row="7" Grid.Column="0" Content="Single Ingredients Promotion Count" />
-            <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding SingleIngredientPromotionCount}" />
-        </Grid>
-
-        <Separator Grid.Row="1" />
-        
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Label Grid.Row="0" Grid.Column="0" Content="Generation" />
-            <Label Grid.Row="0" Grid.Column="1" Content="{Binding GenerationCount}" />
-
-            <Label Grid.Row="1" Grid.Column="0" Content="Average Fitness" />
-            <Label Grid.Row="1" Grid.Column="1" Content="{Binding AverageFitness}" />
-
-            <Label Grid.Row="2" Grid.Column="0" Content="Result Potions" />
-            <TreeView Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Potions}">
-                <TreeView.Resources>
-                    <HierarchicalDataTemplate DataType="{x:Type dataModel:Potion}" ItemsSource="{Binding Ingredients}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="auto" />
-                                <ColumnDefinition Width="auto" />
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Content="{Binding Score}" ContentStringFormat="Score: {0}" />
-                            <Label Grid.Column="1" Content="{Binding Tier}" ContentStringFormat="Tier: {0}" />
-                            <Label Grid.Column="2" Content="{Binding TotalMagimins}" ContentStringFormat="Magimins: {0}" />
-                        </Grid>
-                    </HierarchicalDataTemplate>
-                    <DataTemplate DataType="{x:Type dataModel:Ingredient}">
-                        <Label Content="{Binding Name}" />
-                    </DataTemplate>
-                </TreeView.Resources>
-            </TreeView>
-        </Grid>
-
-        <Grid Grid.Row="3">
-            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Calculate Best Potions" Command="{Binding CalculateBestPotions}" IsEnabled="{Binding CalculateBestPotions.IsRunning, Converter={StaticResource InverseBooleanConverter}}" Margin="5" Padding="10" />
-            <Button Grid.Column="2" Content="Stop Calculation" Command="{Binding CancelCalculateBestPotions}" IsEnabled="{Binding CalculateBestPotions.IsRunning}" Margin="5" Padding="10" />
+            <Button Grid.Column="1" Content="Calculate Best Potions" Command="{Binding CalculateBestPotions}" Visibility="{Binding CalculateBestPotions.IsRunning, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="5" Padding="10" />
+            <Button Grid.Column="2" Content="Stop Calculation" Command="{Binding CancelCalculateBestPotions}" Visibility="{Binding CalculateBestPotions.IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="5" Padding="10" />
+
+            <Button Grid.Column="3" Content="Calculate All Best Potions" Command="{Binding CalculateAllBestPotions}" Visibility="{Binding CalculateAllBestPotions.IsRunning, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="5" Padding="10" />
+            <Button Grid.Column="4" Content="Stop All Calculation" Command="{Binding CancelCalculateAllBestPotions}" Visibility="{Binding CalculateAllBestPotions.IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="5" Padding="10" />
+
+            <Button Grid.Column="5" Content="Save Results" Command="{Binding SaveResults}" Visibility="{Binding SaveResults.IsRunning, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Margin="5" Padding="10" />
+            <Button Grid.Column="6" Content="Stop Saving" Command="{Binding CancelSaveResults}" Visibility="{Binding SaveResults.IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="5" Padding="10" />
         </Grid>
     </Grid>
     
